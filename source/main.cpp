@@ -1,11 +1,22 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "ei_run_classifier.h"
+#include "hardware/gpio.h"
+#include "hardware/adc.h"
 
-static const float features[] = {196, 61, 82, 204, 50, 84, 228, 56, 92, 273, 280, 284, 287, 287, 287, 294, 287, 288, 288, 287, 293, 285, 139, 62, 58, 257, 80, 44, 229, 81, 68, 50, 232, 258, 102, 91, 73, 67, 73, 197};
-
+static float features[40];
+const uint LED_PIN = 25;
 
 int raw_feature_get_data(size_t offset, size_t length, float *out_ptr) {
+
+    ei_printf("Gathering data \n");
+    for (uint8_t i = 0; i < 40; i = i + 1) 
+    {
+    features[i] = adc_read();
+    //ei_printf("%.5f\n", features[i]);
+    sleep_ms(25);
+    }
+    
     memcpy(out_ptr, features + offset, length * sizeof(float));
     return 0;
 }
@@ -13,7 +24,11 @@ int raw_feature_get_data(size_t offset, size_t length, float *out_ptr) {
 int main()
 {
     stdio_init_all();
-    const uint LED_PIN = 25;
+    adc_init();
+
+    adc_gpio_init(26);
+    adc_select_input(0);
+    
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
     

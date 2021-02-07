@@ -18,7 +18,7 @@ add_executable(hello_ml
 
 include(${MODEL_FOLDER}/edge-impulse-sdk/cmake/utils.cmake)
 
-target_link_libraries(hello_ml pico_stdlib)
+target_link_libraries(hello_ml pico_stdlib hardware_adc)
 
 # enable usb output, disable uart output
 pico_enable_stdio_usb(hello_ml 1)
